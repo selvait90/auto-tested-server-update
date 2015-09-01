@@ -15,7 +15,8 @@
 remote_user="root"
 remote_server="selva"
 remote_path="~/tested-update"
-files=$(ssh selva@selva cd $remote_path && ls diff*)
+# files=$(ssh selva@selva cd $remote_path && ls diff*)
+files=$(ssh selva@selva cd $remote_path && ls *)
 i=1
 
 for j in $files
@@ -37,13 +38,42 @@ updates=`apt-get --just-print dist-upgrade | egrep -v '(Inst|Conf)' | head -n -1
 # echo "$updates" | grep -A3 "The following"
 packages=`echo $updates | awk -F 'The following ' '{for (i =2 ; i <= NF; i++) {print $i} }'`
 
-echo "$packages" | while read p; do
-echo $p
-if [[ ("$p" == *"NEW packages will be installed"*) || ("$p" == *"extra packages will be installed"*) || ("$p" == *"packages will be upgraded"*) ]] ; then
-echo "INSTALLED"
-elif [[ "$p" == *"packages will be REMOVED"* ]]
-then
-echo "REMOVED"
-fi
-echo "************"
-done
+install=""
+upgrade=""
+remove=""
+echo "**************************************************************"
+while read p; do
+  echo $p
+  if [[ ("$p" == *"NEW packages will be installed"*) || ("$p" == *"extra packages will be installed"*) ]] ; then
+    echo "INSTALLED"
+    string="$( cut -d ':' -f 2- <<< "$p" )"; echo "$string"
+    install="$install$string" 
+  elif [[ "$p" == *"packages will be upgraded"* ]]
+  then
+    echo "UPGRADED"
+    string="$( cut -d ':' -f 2- <<< "$p" )"; echo "$string"
+    upgrade="$upgrade$string" 
+  elif [[ "$p" == *"packages will be REMOVED"* ]]
+  then
+    echo "REMOVED"
+    string="$( cut -d ':' -f 2- <<< "$p" )"; echo "$string"
+    remove="$remove$string" 
+  fi
+done < <(echo "$packages")
+
+# echo "** INSTALLED: $install"
+install_filter=`echo "$install" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\\|/g'`
+to_install=`cat $remote_file | grep "$install_filter"`
+echo $install_filter
+echo "apt-get install --simulate" $to_install
+# echo "** INSTALLED: $upgrade"
+upgrade_filter=`echo "$upgrade" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\\|/g'`
+to_upgrade=`cat $remote_file | grep "$upgrade_filter"`
+echo $upgrade_filter
+echo "apt-get install --simulate" $to_upgrade
+echo "** REMOVED  : $remove"
+remove_filter=`echo "$remove" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\|/g'`
+to_remove=`cat $remote_file | grep "$remove_filter"`
+echo $to_upgrade
+echo "apt-get remove --simulate" $to_remove
+
