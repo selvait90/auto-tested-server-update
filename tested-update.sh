@@ -33,4 +33,17 @@ echo "scp $remote_user@$remote_server:$remote_path/$remote_file ."
 
 # Processing packages under tested packages
 
+updates=`apt-get --just-print dist-upgrade | egrep -v '(Inst|Conf)' | head -n -1`
+# echo "$updates" | grep -A3 "The following"
+packages=`echo $updates | awk -F 'The following ' '{for (i =2 ; i <= NF; i++) {print $i} }'`
 
+echo "$packages" | while read p; do
+echo $p
+if [[ ("$p" == *"NEW packages will be installed"*) || ("$p" == *"extra packages will be installed"*) || ("$p" == *"packages will be upgraded"*) ]] ; then
+echo "INSTALLED"
+elif [[ "$p" == *"packages will be REMOVED"* ]]
+then
+echo "REMOVED"
+fi
+echo "************"
+done
