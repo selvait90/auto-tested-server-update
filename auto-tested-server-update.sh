@@ -13,8 +13,8 @@
 ##   -P            Remote Test server path to fetch the tested packages file, Optional
 ##   -p            Prod server path to place the tested packages list file from test server, Optional
 ##
-## Test Server Update Usage: ./auto-tested-update.sh -t test [-s server] [-p path] [-f file_name] 
-## Prod Server Update Usage: ./auto-tested-update.sh -t prod -S remote_server -U remote_user [-P remote_path] [-p path]
+## Test Server Update Usage: ./auto-tested-server-update.sh -t test [-s server] [-p path] [-f file_name] 
+## Prod Server Update Usage: ./auto-tested-server-update.sh -t prod -S remote_server -U remote_user [-P remote_path] [-p path]
 
 echo -e "
     ##########################################################\n\
@@ -24,8 +24,8 @@ echo -e "
 function usage
 {
   tmp_path=~/tmp
-  echo "    ### Test Server Update Usage: ./auto-tested-update.sh -t test [-s server] [-p path] [-f file_name] ###"
-  echo "    ### Prod Server Update Usage: ./auto-tested-update.sh -t prod -S remote_server -U remote_user [-P remote_path] [-p path]###"
+  echo "    ### Test Server Update Usage: ./auto-tested-server-update.sh -t test [-s server] [-p path] [-f file_name] ###"
+  echo "    ### Prod Server Update Usage: ./auto-tested-server-update.sh -t prod -S remote_server -U remote_user [-P remote_path] [-p path]###"
   echo "    ### Default Values ###"
   echo -e "
       server : $(hostname) \n\
