@@ -7,6 +7,7 @@
 ## Test Server Options
 ##   -s            Name of the test server to use in filename, Optional
 ##   -p            Test server path to place the processing files, optional
+##   -f            Name of the file having changed packages and input for prod server, optional
 ## Prod Server Options
 ##   -S            Name of the remote test server to fetch the tested packages list
 ##   -U            Username of the remote test server to fetch the tested packages list
