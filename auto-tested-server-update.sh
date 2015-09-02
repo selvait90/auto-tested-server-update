@@ -99,8 +99,7 @@ if [ "$update_type" == "test" ] ; then
 elif [ "$update_type" == "prod" ]
 then
   # Production server actions
-  # files=$(ls *.txt)
-  echo "*** Producttion Server Update Process ***"
+  echo "*** Production Server Update Process ***"
   if [[ ("$remote_user" == "") || ("$remote_server" == "") ]]; then
     echo -e "ERROR: Must provide remote user and server to fetch tested package lists\n"
     usage 
@@ -120,7 +119,6 @@ then
 
   # Fetch the list of tested packages & versions file from test server 
 
-  # files=$(ssh selva@selva cd $remote_path && ls diff*)
   files=$(ssh $remote_user@$remote_server ls $remote_path/diff*)
   i=0
 
@@ -169,20 +167,32 @@ then
   install_filter=`echo "$install" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\\|/g'`
   to_install=`grep '>' $path/$remote_file | cut -d '>' -f 2 | grep "$install_filter"`
   echo "*********************** Installation *************************"
-  echo "apt-get install" $to_install
-  apt-get install $to_install
+  if [[ "$to_install" != "" ]] ; then
+    echo "apt-get install" $to_install
+    apt-get install $to_install
+  else
+    echo "INFO: No packages to install"
+  fi
   echo "**************************************************************"
   upgrade_filter=`echo "$upgrade" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\\|/g'`
   to_upgrade=`grep '|' $path/$remote_file | cut -d '|' -f 2 | grep "$upgrade_filter"`
   echo "************************* Upgrade ****************************"
-  echo "apt-get install" $to_upgrade
-  apt-get install $to_upgrade
+  if [[ "$to_upgrade" != "" ]] ; then
+    echo "apt-get install" $to_upgrade
+    apt-get install $to_upgrade
+  else
+    echo "INFO: No packages to upgrade"
+  fi
   echo "**************************************************************"
   remove_filter=`echo "$remove" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\\|/g'`
   to_remove=`grep '<' $path/$remote_file | cut -d '<' -f 1 | grep "$remove_filter"`
   echo "************************** Removal ***************************"
-  echo "apt-get remove" $to_remove
-  apt-get remove $to_remove
+  if [[ "$to_remove" != "" ]] ; then
+    echo "apt-get remove" $to_remove
+    apt-get remove $to_remove
+  else
+    echo "INFO: No packages to remove"
+  fi
   echo "**************************************************************"
 else
   echo "ERROR: Please provide server type as 'test' or 'prod'"
