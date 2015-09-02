@@ -164,8 +164,12 @@ then
   done < <(echo "$packages")
 
   # Generate server update commands based on filtered packages 
-  install_filter=`echo "$install" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\\|/g'`
-  to_install=`grep '>' $path/$remote_file | cut -d '>' -f 2 | grep "$install_filter"`
+  if [[ "$install" != "" ]] ; then
+    install_filter=`echo "$install" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\\|/g'`
+    to_install=`grep '>' $path/$remote_file | cut -d '>' -f 2 | grep "$install_filter"`
+  else
+    to_install=""
+  fi
   echo "*********************** Installation *************************"
   if [[ "$to_install" != "" ]] ; then
     echo "apt-get install" $to_install
@@ -174,8 +178,12 @@ then
     echo "INFO: No packages to install"
   fi
   echo "**************************************************************"
-  upgrade_filter=`echo "$upgrade" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\\|/g'`
-  to_upgrade=`grep '|' $path/$remote_file | cut -d '|' -f 2 | grep "$upgrade_filter"`
+  if [[ "$upgrade" != "" ]] ; then
+    upgrade_filter=`echo "$upgrade" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\\|/g'`
+    to_upgrade=`grep '|' $path/$remote_file | cut -d '|' -f 2 | grep "$upgrade_filter"`
+  else
+    to_upgrade=""
+  fi
   echo "************************* Upgrade ****************************"
   if [[ "$to_upgrade" != "" ]] ; then
     echo "apt-get install" $to_upgrade
@@ -184,8 +192,12 @@ then
     echo "INFO: No packages to upgrade"
   fi
   echo "**************************************************************"
-  remove_filter=`echo "$remove" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\\|/g'`
-  to_remove=`grep '<' $path/$remote_file | cut -d '<' -f 1 | grep "$remove_filter"`
+  if [[ "$remove" != "" ]] ; then
+    remove_filter=`echo "$remove" | sed 's/^ //g' | sed 's/[.0-9-]\+ / /' | sed 's/ /\\\|/g'`
+    to_remove=`grep '<' $path/$remote_file | cut -d '<' -f 1 | grep "$remove_filter"`
+  else
+    to_remove=""
+  fi
   echo "************************** Removal ***************************"
   if [[ "$to_remove" != "" ]] ; then
     echo "apt-get remove" $to_remove
