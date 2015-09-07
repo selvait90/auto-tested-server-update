@@ -1,0 +1,7 @@
+							      >	git=1:1.7.9.5-1ubuntu0.1
+							      >	git-man=1:1.7.9.5-1ubuntu0.1
+metacity=1:2.34.1-1ubuntu11				      <
+mysql-client=5.43-0ubuntu0.12.04.1			      |	mysql-client=5.5.43-0ubuntu0.12.04.1
+ubuntu-desktop=1.267.1					      <
+unity-2d=5.14.0-0ubuntu1				      <
+							      >	wget=1.13.4-2ubuntu1
